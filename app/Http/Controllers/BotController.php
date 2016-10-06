@@ -40,17 +40,17 @@ class BotController extends Controller
         if (!Input::has('message'))
             return null;
         $message = $request->input('message');
-        if (!isset($message->from) && !$message->from)
+        if (!isset($message['from']) && !$message['from'])
             return null;
-        $user_data = $message->from;
-        $user = TelegramUser::where('t_id', $user_data->id)->first();
+        $user_data = $message['from'];
+        $user = TelegramUser::where('t_id', $user_data['from'])->first();
         if ($user)
             return $user;
         $user = new TelegramUser();
-        $user->t_id = $user_data->id;
-        $user->first_name = $user_data->first_name;
-        $user->last_name = $user_data->last_name;
-        $user->username = $user_data->username;
+        $user->t_id = $user_data['id'];
+        $user->first_name = $user_data['first_name'];
+        $user->last_name = $user_data['last_name'];
+        $user->username = $user_data['username'];
         $user->save();
         return $user;
     }
