@@ -32,12 +32,8 @@ class BotController extends Controller
 
         $user = $this->getUserFromRequest($message);
 
-        $this->textHandle($message['text']);
-
-        $response = Telegram::sendMessage([
-            'chat_id' => $user->t_id,
-            'text' => $user->username
-        ]);
+        if ($message['text'])
+            $handle_result = $this->textHandle($message['text'], $user);
 
     }
 
@@ -62,10 +58,31 @@ class BotController extends Controller
         return $user;
     }
 
-    private function textHandle($message) {
+
+    /**
+     * @param $message array
+     * @return bool
+     */
+    private function textHandle($message, $user)
+    {
         if (!$message)
             return false;
 
+        switch ($message['text']) {
+            case '/add':
+                Telegram::sendMessage([
+                    'chat_id' => $user->t_id,
+                    'text' => 'Укажите профиль пользователя: '
+                ]);
+                break;
+
+            default:
+                Telegram::sendMessage([
+                    'chat_id' => $user->t_id,
+                    'text' => $user->first_name . ', привет!'
+                ]);
+                break;
+        }
 
     }
 }
