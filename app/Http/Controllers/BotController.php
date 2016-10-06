@@ -68,7 +68,7 @@ class BotController extends Controller
         if (!$message)
             return false;
 
-        switch ($message['text']) {
+        switch ($message) {
             case '/add':
                 Telegram::sendMessage([
                     'chat_id' => $user->t_id,
