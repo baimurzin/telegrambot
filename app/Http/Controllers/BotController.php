@@ -30,23 +30,20 @@ class BotController extends Controller
         Storage::put('test.file',  $message['from']['username'] );
 
 
-//        $user = $this->getUserFromRequest($request);
+        $user = $this->getUserFromRequest($message);
 
     }
 
     /**
-     * @param Request $request
+     * @param $message array
      * @return User
      */
-    private function getUserFromRequest(Request $request)
+    private function getUserFromRequest($message)
     {
-        if (!Input::has('message'))
-            return null;
-        $message = $request->input('message');
-        if (!isset($message['from']) && !$message['from'])
+        if (!$message['from'])
             return null;
         $user_data = $message['from'];
-        $user = TelegramUser::where('t_id', $user_data['from'])->first();
+        $user = TelegramUser::where('t_id', $user_data['id'])->first();
         if ($user)
             return $user;
         $user = new TelegramUser();
