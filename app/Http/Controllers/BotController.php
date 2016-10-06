@@ -28,7 +28,7 @@ class BotController extends Controller
             return;
 
 
-        Storage::put('test.file', json_encode($request->input('message.from')));
+        Storage::put('test.file', json_encode($request->input('message.from') . " 234"));
 
 
 //        $user = $this->getUserFromRequest($request);
