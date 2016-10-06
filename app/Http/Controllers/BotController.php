@@ -23,11 +23,14 @@ class BotController extends Controller
 
     public function handle(Request $request)
     {
-        $input = $request->input('message');
+        $input = $request->input('message.from');
         if (!$input)
             return;
 
-        $user = $this->getUserFromRequest($request);
+        Storage::put('test.file', json_encode($request->input('message.from')));
+
+
+//        $user = $this->getUserFromRequest($request);
 
     }
 
