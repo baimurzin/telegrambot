@@ -27,10 +27,15 @@ class BotController extends Controller
         if (!$input)
             return;
         $message = $request->input('message');
-        Storage::put('test.file',  $message['from']['username'] );
-
+        Storage::put('test.file', $message['from']['username']);
 
         $user = $this->getUserFromRequest($message);
+        $response = Telegram::sendMessage([
+            'chat_id' => $user->t_id,
+            'text' => $user->username
+        ]);
+
+        Storage::put('test.file', json_encode($response));
 
     }
 
