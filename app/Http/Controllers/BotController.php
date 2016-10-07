@@ -27,12 +27,10 @@ class BotController extends Controller
         if (!$input)
             return;
         $message = $request->input('message');
-        Storage::put('test.file', json_encode($message));
-
 
         $user = $this->getUserFromRequest($message);
 
-        $this->handleSteps($user);
+        $this->handleSteps($user, $message);
 
     }
 
@@ -57,25 +55,46 @@ class BotController extends Controller
         return $user;
     }
 
-    private function handleSteps($user) {
+    private function handleSteps($user, $message) {
+        $text = $message['text'];
         switch ($user->step) {
             case TelegramUser::START_USING:
                 $keyboard = [
                     ['/add']
                 ];
                 $markup = $this->buildKeyboard($keyboard);
+
+                $user->step = TelegramUser::ADD_AWAITING;
+
                 $response = Telegram::sendMessage([
                     'chat_id' => $user->t_id,
                     'text' => 'Добавить аккаунт',
                     'reply_markup' => $markup
                 ]);
+                $user->save();
                 break;
             case TelegramUser::ADD_AWAITING:
+                if (isset($text) && $text) {
+                    $user->step = TelegramUser::ADDED_USER;
+                    $user->save();
+                    $text = "Вы добавили " . $text;
+                    $this->sendText($user, $text);
+                } else {
+                    $text = "Укажите ссылку на профиль пользователя или его id";
+                    $this->sendText($user, $text);
+                }
 
                 break;
             default:
                 break;
         }
+    }
+
+    public function sendText($user, $text) {
+        Telegram::sendMessage([
+            'chat_id' => $user->t_id,
+            'text' => $text
+        ]);
     }
 
     private function buildKeyboard($keyboard) {
