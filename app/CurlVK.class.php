@@ -37,4 +37,12 @@ class CurlVK
         curl_close($ch);
         return json_decode($exec, true);
     }
+
+    public function getFriends($ids) {
+
+    }
+
+    public function getId($name) {
+
+    }
 }
