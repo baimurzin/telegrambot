@@ -59,19 +59,23 @@ class BotController extends Controller
         $text = $message['text'];
         switch ($user->step) {
             case TelegramUser::START_USING:
-                $keyboard = [
-                    ['/add']
-                ];
-                $markup = $this->buildKeyboard($keyboard);
+                if ($text == '/add') {
+                    $text = "Укажите профайл: ";
+                    $this->sendText($user, $text);
+                    $user->step = TelegramUser::ADD_AWAITING;
+                    $user->save();
+                } else {
+                    $keyboard = [
+                        ['/add']
+                    ];
+                    $markup = $this->buildKeyboard($keyboard);
 
-
-
-                $response = Telegram::sendMessage([
-                    'chat_id' => $user->t_id,
-                    'text' => 'Добавить аккаунт',
-                    'reply_markup' => $markup
-                ]);
-                $user->save();
+                    $response = Telegram::sendMessage([
+                        'chat_id' => $user->t_id,
+                        'text' => 'Добавить аккаунт',
+                        'reply_markup' => $markup
+                    ]);
+                }
                 break;
             case TelegramUser::ADD_AWAITING:
                 if (isset($text) && $text) {
