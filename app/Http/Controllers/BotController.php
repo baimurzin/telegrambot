@@ -64,7 +64,7 @@ class BotController extends Controller
                 ];
                 $markup = $this->buildKeyboard($keyboard);
 
-                $user->step = TelegramUser::ADD_AWAITING;
+
 
                 $response = Telegram::sendMessage([
                     'chat_id' => $user->t_id,
@@ -78,7 +78,12 @@ class BotController extends Controller
                     $user->step = TelegramUser::ADDED_USER;
                     $user->save();
                     $text = "Вы добавили " . $text;
-                    $this->sendText($user, $text);
+                    $reply_markup = Telegram::replyKeyboardHide();
+                    $response = Telegram::sendMessage([
+                        'chat_id' => $user->t_id,
+                        'text' => $text,
+                        'reply_markup' => $reply_markup
+                    ]);
                 } else {
                     $text = "Укажите ссылку на профиль пользователя или его id";
                     $this->sendText($user, $text);
