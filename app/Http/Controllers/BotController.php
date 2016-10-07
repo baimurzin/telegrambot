@@ -83,20 +83,39 @@ class BotController extends Controller
                 }
                 break;
             case TelegramUser::ADD_AWAITING:
+                if ($text == 'Да') {
+                    $this->sendText($user, $text);
+                } elseif ($text == 'Нет') {
+                    $this->sendText($user, $text);
+
+                } elseif ($text == 'Добавить еще раз') {
+                    $this->sendText($user, $text);
+
+                }
                 if (isset($text) && $text) {
                     $user->step = TelegramUser::ADDED_USER;
                     $user->save();
-                    $text = "Вы добавили " . $text;
-                    $reply_markup = Telegram::replyKeyboardHide();
+                    $text = "Вы добавили " . $text . ' Подтвердите выбор?';
+
+                    $keyboard = [
+                        ['Да'],
+                        ['Нет'],
+                        ['Добавить еще раз']
+                    ];
+                    $markup = $this->buildKeyboard($keyboard);
+
                     $response = Telegram::sendMessage([
                         'chat_id' => $user->t_id,
                         'text' => $text,
-                        'reply_markup' => $reply_markup
+                        'reply_markup' => $markup
                     ]);
                 } else {
                     $text = "Укажите ссылку на профиль пользователя или его id";
                     $this->sendText($user, $text);
                 }
+
+                break;
+            case TelegramUser::ADDED_USER:
 
                 break;
             default:
